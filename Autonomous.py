@@ -87,7 +87,7 @@ def main():
     while (running):
         drawtime+=1
         time.sleep(.01)
-        dt=(time.time()-lasttime)/1000000.0
+        dt=(time.time()-lasttime)
         velx=cs.ax*dt
         vely=cs.ay*dt
         px=velx*dt
