@@ -3,15 +3,18 @@ import sys
 clr.AddReference('System.Windows.Forms')
 clr.AddReference('System.Drawing')
 sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new\Lib")
+sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new")
+sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new\Lib")
+sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new")
 
 
 import time
 from System.Drawing import Point
 from System.Windows import Forms
 import keyboard
-from graphics import *
+#from graphics import *
 
-
+'''
 height=500
 width=500
 anchorpoint=Point(width/2,height/2)
@@ -27,7 +30,7 @@ def draw():
         c=Circle(Point(p[0],p[1]),2)
         c.setFill("red")
         #c.draw(win)
-
+'''
 
 def takeoff():
     if cs.armed:
@@ -84,7 +87,7 @@ def main():
     while (running):
         drawtime+=1
         time.sleep(.01)
-        dt=(time.time-lasttime)/1000000.0
+        dt=(time.time()-lasttime)/1000000.0
         velx=cs.ax*dt
         vely=cs.ay*dt
         px=velx*dt
@@ -98,7 +101,7 @@ def main():
         if (keyboard.is_pressed('down')):
             print('down')
         if(drawtime>20):
-            draw()
+            #draw()
             drawtime=0
     land()
 

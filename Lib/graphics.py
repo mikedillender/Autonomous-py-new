@@ -162,10 +162,11 @@ __version__ = "5.0"
 
 import time, os, sys
 
-try:  # import as appropriate for 2.x vs. 3.x
-    import tkinter as tk
-except:
-    import Tkinter as tk
+sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new\Lib")
+sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new")
+sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new\Lib")
+sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new")
+import tkinter as tk
 
 
 ##########################################################################
