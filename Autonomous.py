@@ -1,4 +1,6 @@
 import clr
+import Processing.py as pr
+from multiprocessing import Pool
 
 clr.AddReference('System.Windows.Forms')
 clr.AddReference('System.Drawing')
@@ -83,7 +85,10 @@ def disarm():
 
 # Main loop
 
-def main():
+
+if __name__ == '__main__':
+    pool = Pool(processes=4)
+    pool.map(pr.update())
     for channel in range(1, 9):
         Script.SendRC(channel, 1500, True)
     print('Running main')
