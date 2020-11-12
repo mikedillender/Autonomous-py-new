@@ -9,53 +9,25 @@ import time
 from System.Drawing import Point
 from System.Windows import Forms
 import keyboard
+from graphics import *
 
-# GUI window
 
-class CommandBox(Forms.Form):
-    def __init__(self):
-        self.Text = "Command Box"
+height=500
+width=500
+anchorpoint=Point(width/2,height/2)
+#win = GraphWin("map_display_window", width, height)
+image=Image(anchorpoint, height, width)
 
-        self.Width = 350
-        self.Height = 100
+def draw():
+    globals()
+    rect=Rectangle(Point(0,0),Point(width,height))
+    rect.setFill("white")
+    rect.draw(win)
+    for p in pos:
+        c=Circle(Point(p[0],p[1]),2)
+        c.setFill("red")
+        #c.draw(win)
 
-        self.takeoff_button = Forms.Button()
-        self.takeoff_button.Text = 'Take-off'
-        self.takeoff_button.Location = Point(20, 20)
-        self.takeoff_button.Height = 25
-        self.takeoff_button.Width = 80
-        self.takeoff_button.Click += self.takeoff_click
-        
-        self.land_button = Forms.Button()
-        self.land_button.Text = 'Land'
-        self.land_button.Location = Point(110, 20)
-        self.land_button.Height = 25
-        self.land_button.Width = 80
-        self.land_button.Click += self.land_click
-        
-        self.panic_button = Forms.Button()
-        self.panic_button.Text = 'Panic!'
-        self.panic_button.Location = Point(230, 20)
-        self.panic_button.Height = 25
-        self.panic_button.Width = 80
-        self.panic_button.Click += self.panic_click
-
-        self.CancelButton = self.panic_button
-
-        self.Controls.Add(self.takeoff_button)
-        self.Controls.Add(self.land_button)
-        self.Controls.Add(self.panic_button)
-
-    def takeoff_click(self, sender, event):
-        takeoff()
-    
-    def land_click(self, sender, event):
-        land()
-    
-    def panic_click(self, sender, event):
-        disarm()
-
-# Commands
 
 def takeoff():
     if cs.armed:
@@ -87,26 +59,47 @@ def disarm():
 
 # Main loop
 
+running=True
 
-keyboard.add_hotkey('esc', lambda: disarm())
+def stop():
+    global running
+    disarm()
+    running=False
+
+keyboard.add_hotkey('esc', lambda: stop())
+velx=0
+vely=0
+px=0
+py=0
+
 def main():
+    globals()
+    global velx,vely,px,py
     for channel in range(1, 9):
         Script.SendRC(channel, 1500, True)
-    print('Running main')
 
-    start = int(round(time.time() * 1000))
-    #takeoff()
-    while (int(round(time.time() * 1000))-start<10000):
-        print(time.time())
+    print('Running main')
+    drawtime=0
+    lasttime=time.time()
+    while (running):
+        drawtime+=1
         time.sleep(.01)
+        dt=(time.time-lasttime)/1000000.0
+        velx=cs.ax*dt
+        vely=cs.ay*dt
+        px=velx*dt
+        py=vely*dt
+        print(str(px)+", "+str(py));
+        lasttime=time.time()
         if (keyboard.is_pressed('shift')):
             print('SHIFTED')
         if (keyboard.is_pressed('up')):
-            print('UP')
+            print('up')
         if (keyboard.is_pressed('down')):
             print('down')
-    #form = CommandBox()
-    #Forms.Application.Run(form)
+        if(drawtime>20):
+            draw()
+            drawtime=0
     land()
 
 
