@@ -165,8 +165,12 @@ import time, os, sys
 sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new\Lib")
 sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new")
 sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new\Lib")
+sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new\Lib\site-packages\future\moves")
 sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new")
-import tkinter as tk
+try:  # import as appropriate for 2.x vs. 3.x
+    import tkinter as tk
+except:
+    import Tkinter as tk
 
 
 ##########################################################################

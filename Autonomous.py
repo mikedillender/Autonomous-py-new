@@ -12,13 +12,12 @@ import time
 from System.Drawing import Point
 from System.Windows import Forms
 import keyboard
-#from graphics import *
-
 '''
+from graphics import *
 height=500
 width=500
 anchorpoint=Point(width/2,height/2)
-#win = GraphWin("map_display_window", width, height)
+win = GraphWin("map_display_window", width, height)
 image=Image(anchorpoint, height, width)
 
 def draw():
@@ -74,10 +73,11 @@ velx=0
 vely=0
 px=0
 py=0
-
+lax=0
+lay=0
 def main():
     globals()
-    global velx,vely,px,py
+    global velx,vely,px,py,lax,lay
     for channel in range(1, 9):
         Script.SendRC(channel, 1500, True)
 
@@ -88,11 +88,14 @@ def main():
         drawtime+=1
         time.sleep(.01)
         dt=(time.time()-lasttime)
-        velx=cs.ax*dt
-        vely=cs.ay*dt
-        px=velx*dt
-        py=vely*dt
-        print(str(px)+", "+str(py));
+        lax=(lax*.5+cs.ax*1.5)/2
+        lay=(lay*.5+cs.ay*1.5)/2
+        velx=velx+cs.ax*dt
+        vely=vely+cs.ay*dt
+        px=px+velx*dt
+        py=py+vely*dt
+        #print(str(px)+", "+str(py));
+        print (cs.messages)
         lasttime=time.time()
         if (keyboard.is_pressed('shift')):
             print('SHIFTED')
