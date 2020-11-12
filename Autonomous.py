@@ -97,10 +97,16 @@ if __name__ == '__main__':
     #takeoff()
     while (int(round(time.time() * 1000))-start<10000):
         print(time.time())
+        time.sleep(.01)
         if (keyboard.is_pressed('shift')):
             print('SHIFTED')
+        if (keyboard.is_pressed('up')):
+            print('UP')
+        if (keyboard.is_pressed('down')):
+            print('down')
     #form = CommandBox()
     #Forms.Application.Run(form)
     land()
+
 
 main()
