@@ -1,10 +1,11 @@
 import clr
-import Processing.py as pr
-from multiprocessing import Pool
 
 clr.AddReference('System.Windows.Forms')
 clr.AddReference('System.Drawing')
+9
 
+
+import time
 from System.Drawing import Point
 from System.Windows import Forms
 
@@ -57,14 +58,14 @@ class CommandBox(Forms.Form):
 
 def takeoff():
     if cs.armed:
-        print 'Motors already armed'
+        print ('Motors already armed')
     else:
         print('Arming motors')
         Script.ChangeMode('Autonomous')
         MAV.doARM(True)
         Script.Sleep(5000)
 
-        print 'Initiating take-off'
+        print ('Initiating take-off')
         Script.SendRC(3, 1500 + Script.GetParam('THR_DZ'), True)
         Script.Sleep(10)
         Script.SendRC(3, 1500, True)
@@ -78,7 +79,7 @@ def land():
 
 def disarm():
     if not cs.armed:
-        print 'Motors already disarmed'
+        print ('Motors already disarmed')
     else:
         print('Disarming motors')
         MAV.doARM(False)
@@ -87,13 +88,16 @@ def disarm():
 
 
 if __name__ == '__main__':
-    pool = Pool(processes=4)
-    pool.map(pr.update())
     for channel in range(1, 9):
         Script.SendRC(channel, 1500, True)
     print('Running main')
-    form = CommandBox()
-    Forms.Application.Run(form)
+
+    start = int(round(time.time() * 1000))
+    takeoff()
+    while (int(round(time.time() * 1000))-start<4000):
+        print(time.time())
+    #form = CommandBox()
+    #Forms.Application.Run(form)
     land()
 
 main()

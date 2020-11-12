@@ -1,2 +1,3 @@
 def update():
-    print("Hello")
+    while(true):
+        print("Hello")
