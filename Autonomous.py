@@ -2,12 +2,12 @@ import clr
 
 clr.AddReference('System.Windows.Forms')
 clr.AddReference('System.Drawing')
-9
 
 
 import time
 from System.Drawing import Point
 from System.Windows import Forms
+import keyboard
 
 # GUI window
 
@@ -87,15 +87,18 @@ def disarm():
 # Main loop
 
 
+keyboard.add_hotkey('esc', lambda: disarm())
 if __name__ == '__main__':
     for channel in range(1, 9):
         Script.SendRC(channel, 1500, True)
     print('Running main')
 
     start = int(round(time.time() * 1000))
-    takeoff()
-    while (int(round(time.time() * 1000))-start<1000):
+    #takeoff()
+    while (int(round(time.time() * 1000))-start<10000):
         print(time.time())
+        if (keyboard.is_pressed('shift')):
+            print('SHIFTED')
     #form = CommandBox()
     #Forms.Application.Run(form)
     land()
