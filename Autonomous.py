@@ -94,7 +94,7 @@ if __name__ == '__main__':
 
     start = int(round(time.time() * 1000))
     takeoff()
-    while (int(round(time.time() * 1000))-start<4000):
+    while (int(round(time.time() * 1000))-start<1000):
         print(time.time())
     #form = CommandBox()
     #Forms.Application.Run(form)
