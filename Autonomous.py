@@ -89,7 +89,7 @@ def disarm():
 
 
 keyboard.add_hotkey('esc', lambda: disarm())
-if __name__ == '__main__':
+def main():
     for channel in range(1, 9):
         Script.SendRC(channel, 1500, True)
     print('Running main')
