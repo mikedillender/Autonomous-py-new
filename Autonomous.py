@@ -110,9 +110,10 @@ def main():
                 aer[0] = (aer[0]+.1*cs.ax)/1.1
                 aer[1] = (aer[0]+.1*cs.ax)/1.1
                 print("error = "+str(aer[0])+", "+str(aer[1]))
-
-
-
+        '''TODO: Other possible approaches:
+            -Measure rate of change of lidar to estimate velocity
+            -use current orientation to determine flight direction
+        '''
         print (cs.messages)
         lasttime=time.time()
         if (keyboard.is_pressed('up')):
