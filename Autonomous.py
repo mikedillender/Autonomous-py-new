@@ -9,6 +9,7 @@ sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new")
 
 import numpy
 import time
+import math
 from System.Drawing import Point
 from System.Windows import Forms
 import keyboard
@@ -83,9 +84,9 @@ def main():
     while (running):
         time.sleep(.01)
         dt=(time.time()-lasttime)
-
+        orient=3.14159*cs.yaw/180
         if(method==1):#Method 1
-            fa = [cs.ax-aer[0], cs.ay-aer[1]]  # Subtracts error from before takeoff
+            fa = [(cs.ax-aer[0])*np.cos(orient), (cs.ay-aer[1])*np.sin(orient)]  # Subtracts error from before takeoff
             if (cs.armed):
                 for i in range(2):
                     a[i] = (a[i]*.5+fa[i]*1.5)/2  # Slightly weighted to preventing rapid changes
