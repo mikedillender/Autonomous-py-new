@@ -69,43 +69,53 @@ def stop():
     running=False
 
 keyboard.add_hotkey('esc', lambda: stop())
-velx=0
-vely=0
-px=0
-py=0
-lax=0
-lay=0
+
+p=[0,0]
+v=[0,0]
+a=[0,0]
+aer=[0,0]
+
 def main():
     globals()
-    global velx,vely,px,py,lax,lay
+    global v,p,a,aer
     for channel in range(1, 9):
         Script.SendRC(channel, 1500, True)
 
     print('Running main')
-    drawtime=0
     lasttime=time.time()
+    aer=[cs.ax,cs.ay]
+    method=1
     while (running):
-        drawtime+=1
         time.sleep(.01)
         dt=(time.time()-lasttime)
-        lax=(lax*.5+cs.ax*1.5)/2
-        lay=(lay*.5+cs.ay*1.5)/2
-        velx=velx+cs.ax*dt
-        vely=vely+cs.ay*dt
-        px=px+velx*dt
-        py=py+vely*dt
-        #print(str(px)+", "+str(py));
+
+        if(method==1):#Method 1
+            fa = [cs.ax-aer[0], cs.ay-aer[1]] # Subtracts error from before takeoff
+            if (cs.armed):
+                vn=[0,0];
+                for i in range(2):
+                    a[i]=(a[i]*.5+fa[i]*1.5)/2 # Slightly weighted to preventing rapid changes
+                    vn[i]=v[i]+dt*a[i] # Current calculated velocity
+                    p[i]=p[i]+dt*(v[i]+vn[i])/2 # Calculates average velocity over delta and uses that to compute pos
+                    v[i]=vn[i] # sets old speed as new speed
+                speed=sqrt(v[0]*v[0]+v[1]*v[1]) # Calculated velocity
+                measuredspeed=cs.airspeed # Measured Velocity
+                # If we can get speed and measured speed in the same units,
+                # we can then scale down the calculated speed so they have the same magnitude
+
+            else: # Runs when not flying, measures current error
+                aer[0]=(aer[0]+.1*cs.ax)/1.1
+                aer[1]=(aer[0]+.1*cs.ax)/1.1
+                print("error = "+str(aer[0])+", "+str(aer[1]))
+
+
+
         print (cs.messages)
         lasttime=time.time()
-        if (keyboard.is_pressed('shift')):
-            print('SHIFTED')
         if (keyboard.is_pressed('up')):
-            print('up')
+            takeoff()
         if (keyboard.is_pressed('down')):
-            print('down')
-        if(drawtime>20):
-            #draw()
-            drawtime=0
+            land()
     land()
 
 
