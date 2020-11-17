@@ -3,14 +3,16 @@ import sys
 
 clr.AddReference('System.Windows.Forms')
 clr.AddReference('System.Drawing')
-sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new\Lib")
-sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new")
+#sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new\Lib")
+#sys.path.append(r"c:\Users\liter\Desktop\engr100\Autonomous-py-new")
 sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new\Lib")
+sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new\Lib\site-packages")
 sys.path.append(r"c:\Users\Mike\CLionProjects\Autonomous-py-new")
+sys.path.append(r"c:\users\mike\appdata\local\programs\python\python37-32\lib\site-packages")
 
-import numpy
+#import numpy as np
 import time
-import math
+import math as m
 from System.Drawing import Point
 from System.Windows import Forms
 import keyboard
@@ -20,16 +22,19 @@ v = [0, 0]
 vr = [0, 0]
 a = [0, 0]
 aer = [0, 0]
-past = [[0, 0]]
+past = []
 lid = []
 
 
 def exportPast():
-    name = str(time.time()) + ".csv"
+    #name = str(time.time()) + ".csv"
     for i in past:
-        print(str(i[0]) + " " + str(i[1]))
-    np.savetxt(name, past, delimiter=", ", fmt='% s')
-    p = [0, 0]
+        str1=""
+        for d in i:
+            str1=str1+str(d)+", "
+        print(str1)
+    #np.savetxt(name, past, delimiter=", ", fmt='% s')
+    #p = [0, 0]
 
 
 def takeoff():
@@ -45,6 +50,7 @@ def takeoff():
         Script.SendRC(3, 1500 + Script.GetParam('THR_DZ'), True)
         Script.Sleep(10)
         Script.SendRC(3, 1500, True)
+        print('Finished Takeoff Method')
 
 
 def land():
@@ -98,7 +104,7 @@ def getLidarRates(num):
 
 def findRotDir():
     globals()
-    orient=arctan2([-cs.pitch,cs.roll])-(cs.yaw*3.14159/180)
+    orient=m.atan2([-cs.pitch,cs.roll])-(cs.yaw*3.14159/180)
     return orient
 
 def main():
@@ -106,7 +112,6 @@ def main():
     global v, p, a, aer, vr
     for channel in range(1, 9):
         Script.SendRC(channel, 1500, True)
-
     print('Running main')
     lasttime = time.time()
     aer = [cs.ax, cs.ay]
@@ -114,16 +119,29 @@ def main():
     while (running):
         time.sleep(.01)
         dt = (time.time() - lasttime)
+        if (not cs.armed):
+            for i in range(2):
+                v[i] = 0
+                vr[i] = 0
+                a[i] = 0
+            aer[0] = (aer[0] + .1 * cs.ax) / 1.1
+            aer[1] = (aer[1] + .1 * cs.ay) / 1.1
+        data=[dt, cs.ax, cs.ay, cs.pitch, cs.roll, cs.yaw, cs.airspeed, cs.groundspeed, cs.alt, aer[0], aer[1]]
+        past.append(data)
+
+        '''
+        #flydir
         orient = 3.14159 * cs.yaw / 180
         if (method == 1):  # Method 1
-            fa = [(cs.ax - aer[0]) * np.cos(orient),
-                  (cs.ay - aer[1]) * np.sin(orient)]  # Subtracts error from before takeoff
+            fa = [(cs.ax - aer[0])/100.0 * m.cos(orient),
+                  (cs.ay - aer[1])/100.0 * m.cos(orient)]  # Subtracts error from before takeoff
             if (cs.armed):
+                vn=[v[0], v[1]]
                 for i in range(2):
                     a[i] = (a[i] * .5 + fa[i] * 1.5) / 2  # Slightly weighted to preventing rapid changes
-                    vn[i] = v[i] + dt * a[i]  # Current calculated velocity
+                    vr[i] = v[i] + dt * a[i]  # Current calculated velocity
 
-                speed = sqrt(vn[0] * vn[0] + vn[1] * vn[1])  # Calculated velocity
+                speed = m.sqrt(vn[0] * vn[0] + vn[1] * vn[1])  # Calculated velocity
                 scale = 0 if speed == 0 else cs.airspeed / speed
                 vnr = [vn[0] * scale, vn[1] * scale]
 
@@ -141,13 +159,16 @@ def main():
                     vr[i] = 0
                     a[i] = 0
                 aer[0] = (aer[0] + .1 * cs.ax) / 1.1
-                aer[1] = (aer[0] + .1 * cs.ax) / 1.1
-                print("error = " + str(aer[0]) + ", " + str(aer[1]))
+                aer[1] = (aer[1] + .1 * cs.ay) / 1.1
+                #print("error = " + str(aer[0]) + ", " + str(aer[1]))
+        #elif(method==2):
+        '''
         '''TODO: Other possible approaches:
             -Measure rate of change of lidar to estimate velocity
             -use current orientation to determine flight direction
         '''
-        print (cs.messages)
+        if(keyboard.is_pressed('p')):
+            print (cs.messages)
         lasttime = time.time()
         if (keyboard.is_pressed('up')):
             takeoff()
